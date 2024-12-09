@@ -66,7 +66,7 @@ for i, length in enumerate(lengths):
 
 # Work backwards.
 right_pointer = len(blocks) - 1
-while right_pointer >= 0 and len(blocks[right_pointer].files) <= 1:
+while right_pointer >= 0:
     if blocks[right_pointer].files:
         (file_index, file_size) = blocks[right_pointer].files[0]
 
@@ -93,14 +93,8 @@ for block in blocks:
     disk.extend([BLANK] * block.free_space)
 assert len(disk) == sum(lengths)
 
-# Urgh, fails for part 2. TODO: Some sanity checks on the blocks (no file appears twice?)
-
 checksum = 0
 for disk_index, file_index in enumerate(disk):
     if file_index == BLANK: continue
     checksum += (disk_index * file_index)
 print(checksum)
-
-for i in range(len(disk) // 100):
-    print(disk[i*100:i*100+100])
-print(blocks)
