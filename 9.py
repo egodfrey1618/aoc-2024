@@ -68,6 +68,8 @@ for i, length in enumerate(lengths):
 right_pointer = len(blocks) - 1
 while right_pointer >= 0:
     if blocks[right_pointer].files:
+        # We only need to consider the first file in each block - ensures that we consider each file
+        # exactly once.
         (file_index, file_size) = blocks[right_pointer].files[0]
 
         # See if we can move this file to the left. This is a linear scan, so the overall algorithm is
@@ -79,7 +81,7 @@ while right_pointer >= 0:
             if block.free_space >= file_size:
                 block.free_space -= file_size
                 block.files.append((file_index, file_size))
-                blocks[right_pointer].files = []
+                blocks[right_pointer].files = blocks[right_pointer].files[1:]
                 blocks[right_pointer].free_space += file_size
                 break
 
