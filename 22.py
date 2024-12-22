@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from enum import Enum
 from typing import Optional
-from itertools import permutations
 
 TEST = False
 if TEST:
@@ -44,7 +43,6 @@ print(total)
 keys_to_prices = {}
 
 for state_index, state in enumerate(initial_states):
-    print(state_index, len(initial_states))
     d = {}
     key = (None, None, None, None)
     last_number = state % 10
@@ -65,12 +63,7 @@ for state_index, state in enumerate(initial_states):
 
     for key, value in d.items():
         if key not in keys_to_prices:
-            keys_to_prices[key] = [None] * len(initial_states)
-        keys_to_prices[key][state_index] = value
+            keys_to_prices[key] = 0
+        keys_to_prices[key] += value
 
-best = None
-for key, values in keys_to_prices.items():
-    s = sum(v for v in values if v is not None)
-    if best is None or s > best[1]:
-        best = (key, s)
-        print(best)
+print(max(keys_to_prices.values()))
