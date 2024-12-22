@@ -78,7 +78,7 @@ def move_robot(robot, button):
 
 # Part 1, naive solution. Flood fill to figure out minimum distance
 # between states where all the directional robots are pointing at "GO", and
-# where the last one is.
+# where the last one is. Superceded by solution to part 2.
 @dataclass(frozen=True)
 class State:
     directional_robots: tuple[Position]
