@@ -1,5 +1,6 @@
 from pathlib import Path
 import itertools
+import sys
 
 TEST = False
 if TEST:
@@ -48,10 +49,9 @@ print(len(triangles))
 # Every node has degree 13, so the largest we're going to be able to find is 14.
 # And by inspection, most pairs of nodes don't have many things in common. So
 # a search with backtracking should be fine.
-nodes_list = list(all_nodes)
 best = None
 
-def search(index, current_clique, available_nodes):
+def search(current_clique, available_nodes):
     # Part of the recursive search:
     # - The next index we're considering is [index] into [nodes_list]
     # - Our current clique is [current_clique]
@@ -63,29 +63,25 @@ def search(index, current_clique, available_nodes):
         return
 
     # Base case: If we're collected all that we can, yield it.
-    if len(available_nodes) == 0 or index == len(nodes_list):
+    if len(available_nodes) == 0:
         if best is None or len(best) < len(current_clique):
             best = current_clique.copy()
         return
 
-    # Recursive step.
-    node = nodes_list[index]
+    # Recursive step. Try both including and not including the next node.
+    node = available_nodes.pop()
+    
+    # Try including it. 
+    current_clique.add(node)
+    available_nodes1 = available_nodes & graph[node]
+    search(current_clique, available_nodes1)
+    current_clique.remove(node)
 
-    if node in available_nodes:
-        # Try adding it.
-        current_clique.add(node)
-        available_nodes.remove(node)
-        removed = available_nodes - graph[node]
-        available_nodes &= graph[node]
+    # Try not including it.
+    search(current_clique, available_nodes)
 
-        search(index+1, current_clique, available_nodes)
+    # And set [available_nodes] back to what it was before.
+    available_nodes.add(node)
 
-        # Reset current_clique, available_nodes back to what they were before
-        current_clique.remove(node)
-        available_nodes.add(node)
-        available_nodes |= removed
-
-    search(index+1, current_clique, available_nodes)
-
-search(0, set(), all_nodes)
+search(set(), all_nodes)
 print(",".join(sorted(list(best))))
